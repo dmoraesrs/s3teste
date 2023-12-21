@@ -1,0 +1,64 @@
+apiVersion: backstage.io/v1alpha1
+kind: Template
+metadata:
+  name: s3-bucket-creation
+  title: Criação de Bucket S3
+  description: Template para criar um novo bucket S3.
+  tags:
+    - aws
+    - s3
+    - infraestrutura
+spec:
+  owner: equipe-de-infraestrutura
+  type: serviço
+
+  parameters:
+    - title: Detalhes do Bucket S3
+      required:
+        - bucketName
+        - bucketRegion
+      properties:
+        bucketName:
+          title: Nome do Bucket
+          type: string
+          description: Nome único do bucket S3 a ser criado.
+
+        bucketRegion:
+          title: Região do Bucket
+          type: string
+          description: Região AWS onde o bucket será criado.
+          enum:
+            - us-east-1
+            - us-west-1
+            - us-west-2
+            - eu-west-1
+            - eu-central-1
+            - ap-southeast-1
+            - ap-southeast-2
+            - ap-northeast-1
+            - sa-east-1
+            - cn-north-1
+            - ap-south-1
+          default: us-east-1
+
+  steps:
+    - id: verificarNomeBucket
+      name: Verificar Disponibilidade do Nome do Bucket
+      action: http:get
+      input:
+        url: 'https://s3.amazonaws.com/${{ parameters.bucketName }}'
+        errorOnNon2xxResponse: false
+        options:
+          timeout: 20
+
+    - id: criarBucketS3
+      name: Criar Bucket S3
+      action: aws:s3:createBucket
+      input:
+        bucketName: '{{ parameters.bucketName }}'
+        region: '{{ parameters.bucketRegion }}'
+
+  output:
+    links:
+      - title: Acesso ao Bucket
+        url: 'https://s3.console.aws.amazon.com/s3/buckets/{{ parameters.bucketName }}'
