@@ -19,13 +19,24 @@ spec:
         - owner
       properties:
         name:
-          title: Nome do Serviço
+          title: Name
           type: string
-          description: O nome do serviço a ser criado.
-        owner:
-          title: Proprietário do Serviço
+          description: Unique name of the component
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
           type: string
-          description: O nome da equipe responsável pelo serviço.
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+              - dev.azure.com
 
   steps:
     - id: esqueleto
