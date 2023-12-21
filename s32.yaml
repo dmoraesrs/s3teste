@@ -1,0 +1,49 @@
+apiVersion: backstage.io/v1alpha1
+kind: Template
+metadata:
+  name: S3
+  title: S3
+  description: Um template para criar um novo serviço.
+  tags:
+    - exemplo
+    - serviço
+spec:
+  owner: equipe-responsavel
+  type: service
+
+  parameters:
+    - title: Informações do Serviço
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Nome do Serviço
+          type: string
+          description: O nome do serviço a ser criado.
+        owner:
+          title: Proprietário do Serviço
+          type: string
+          description: O nome da equipe responsável pelo serviço.
+
+  steps:
+    - id: esqueleto
+      name: Gerar Esqueleto do Serviço
+      action: fetch:cookiecutter
+      input:
+        url: https://github.com/sua-organizacao/cookiecutter-exemplo.git
+        values:
+          name: '{{ parameters.name }}'
+          owner: '{{ parameters.owner }}'
+
+    - id: registro
+      name: Registrar no Catalogo
+      action: catalog:register
+      input:
+        repoContentsUrl: '{{ steps.esqueleto.output.repoContentsUrl }}'
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    links:
+      - url: '{{ steps.registro.output.entityUrl }}'
+        title: Ver Serviço no Backstage
