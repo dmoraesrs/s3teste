@@ -47,6 +47,14 @@ spec:
         values:
           name: ${{ parameters.name }}
 
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: https://github.com/dmoraesrs/gcp-pileline
+        values:
+          name: ${{ parameters.name }}
+
     # This step publishes the contents of the working directory to GitHub.
     - id: publish
       name: Publish
