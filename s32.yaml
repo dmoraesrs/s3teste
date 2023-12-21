@@ -2,8 +2,8 @@ apiVersion: scaffolder.backstage.io/v1beta3
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-template
 kind: Template
 metadata:
-  name: S3
-  title: S3
+  name: S3-2
+  title: S3-2
   description: Um template para criar um novo serviço.
   tags:
     - exemplo
