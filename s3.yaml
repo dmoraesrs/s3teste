@@ -1,62 +1,28 @@
-apiVersion: scaffolder.backstage.io/v1beta3
-kind: Template
-# some metadata about the template itself
+apiVersion: backstage.io/v1alpha1
+kind: Component
 metadata:
-  name: v1beta2-demo
-  title: Test Action template
-  description: scaffolder v1beta2 template demo
+  name: nome-do-servico-exemplo
+  description: Descrição do serviço exemplo.
+  tags:
+    - java
+    - backend
+  annotations:
+    backstage.io/techdocs-ref: url:https://github.com/sua-organizacao/repositorio-docs
+
 spec:
-  owner: backstage/techdocs-core
   type: service
+  lifecycle: production
+  owner: equipe-responsavel
+  system: sistema-relacionado
 
-  # these are the steps which are rendered in the frontend with the form input
-  parameters:
-    - title: Fill in some steps
-      required:
-        - name
-      properties:
-        name:
-          title: Name
-          type: string
-          description: Unique name of the component
-          ui:autofocus: true
-          ui:options:
-            rows: 5
-    - title: Choose a location
-      required:
-        - repoUrl
-      properties:
-        repoUrl:
-          title: Repository Location
-          type: string
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
-              - github.com
+  # Defina quaisquer outras propriedades específicas do componente aqui
+  # Isso pode incluir informações como URLs de repositórios, documentação, etc.
 
-  # here's the steps that are executed in series in the scaffolder backend
-  steps:
-    - id: fetch-base
-      name: Fetch Base
-      action: fetch:template
-      input:
-        url: ./template
-        values:
-          name: '{{ parameters.name }}'
-
-    - id: fetch-docs
-      name: Fetch Docs
-      action: fetch:plain
-      input:
-        targetPath: ./community
-        url: https://github.com/backstage/community/tree/main/backstage-community-sessions
-
-    - id: publish
-      name: Publish
-      action: publish:github
-      input:
-        allowedHosts: ['github.com']
-        description: 'This is {{ parameters.name }}'
-        repoUrl: '{{ parameters.repoUrl }}'
-
-
+# Links para a documentação, repositórios de código, etc.
+links:
+  - url: https://github.com/sua-organizacao/repositorio-servico
+    title: Código Fonte
+    icon: github
+  - url: https://sua-organizacao.servico-exemplo/docs
+    title: Documentação
+    icon: docs
