@@ -1,8 +1,9 @@
 apiVersion: backstage.io/v1alpha1
 kind: Template
 metadata:
-  name: exemplo-template-servico
-  title: Template de Serviço Exemplo
+metadata:
+  name: S3
+  title: S3
   description: Um template para criar um novo serviço.
   tags:
     - exemplo
