@@ -6,23 +6,13 @@ metadata:
   tags:
     - java
     - backend
-  annotations:
-    backstage.io/techdocs-ref: url:https://github.com/sua-organizacao/repositorio-docs
-
 spec:
   type: service
   lifecycle: production
   owner: equipe-responsavel
-  system: sistema-relacionado
 
-  # Defina quaisquer outras propriedades específicas do componente aqui
-  # Isso pode incluir informações como URLs de repositórios, documentação, etc.
-
-# Links para a documentação, repositórios de código, etc.
 links:
   - url: https://github.com/sua-organizacao/repositorio-servico
     title: Código Fonte
-    icon: github
   - url: https://sua-organizacao.servico-exemplo/docs
     title: Documentação
-    icon: docs
