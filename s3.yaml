@@ -6,7 +6,7 @@ metadata:
   description: Um template para criar um novo serviço.
   tags:
     - exemplo
-    - serviço
+    - service
 spec:
   owner: equipe-responsavel
   type: service
