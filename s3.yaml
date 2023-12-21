@@ -1,64 +1,97 @@
-apiVersion: backstage.io/v1alpha1
+apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: s3-bucket-creation
-  title: Criação de Bucket S3
-  description: Template para criar um novo bucket S3.
-  tags:
-    - aws
-    - s3
-    - infraestrutura
+  name: aws-lambda
+  title: Create AWS lambda
+  description: Criação de AWS lambda
+  tags: [brunosantosnet, medium, post]
 spec:
-  owner: equipe-de-infraestrutura
-  type: serviço
-
+  owner: brunosantosnet
+  type: service
   parameters:
-    - title: Detalhes do Bucket S3
-      required:
-        - bucketName
-        - bucketRegion
+    - title: 'Dados'
+      required: [name, description, memory, timeout]
       properties:
-        bucketName:
-          title: Nome do Bucket
+        name:
+          title: 'Nome'
           type: string
-          description: Nome único do bucket S3 a ser criado.
-
-        bucketRegion:
-          title: Região do Bucket
+          description: 'Nome da `lambda`'
+          default: 'post-backstage-template'
+          maxLength: 50
+          pattern: '^[a-zA-Z0-9\-]*$'
+          ui:autofocus: true
+          ui:help: 'Máximo de 50 caracteres. Permite letras, números e traço'
+        description:
+          title: 'Descrição'
           type: string
-          description: Região AWS onde o bucket será criado.
+          description: 'Descrição da lambda'
+          maxLength: 100
+          default: 'post-backstage-template'
+          ui:autofocus: true
+          ui:help: 'Resumidamente informe o objetivo da sua `lambda`'
+        memory:
+          title: 'Memória'
+          type: integer
+          description: 'Limite de memória (MB) da função `lambda`'
           enum:
-            - us-east-1
-            - us-west-1
-            - us-west-2
-            - eu-west-1
-            - eu-central-1
-            - ap-southeast-1
-            - ap-southeast-2
-            - ap-northeast-1
-            - sa-east-1
-            - cn-north-1
-            - ap-south-1
-          default: us-east-1
-
+          - 128
+          - 256
+          - 512
+          default: 128
+          ui:autofocus: true
+          ui:help: 'Quanto mais memória, maior o custo da `lambda`'
+        timeout:
+          title: 'Timeout'
+          type: string
+          description: 'Tempo limite em segundos de execução da `lambda`'
+          default: '10'
+          pattern: '^([1-9]|[1-9][0-9]|[1-8][0-9][0-9]|900)$'
+          ui:autofocus: true
+          ui:help: 'Até o limite de 900 segundos'
+        vpc:
+          title: 'Virtual Private Cloud'
+          type: boolean
+          description: 'Marque se a `lambda` precisará acessar recursos que estão na VPC'
+          ui:help: 'Marque se a `lambda` precisará acessar recursos que estão na VPC (ex: RDS, Redis)'
+    - title: 'Repositório da Infraestrutura'
+      required: [repoUrl]
+      properties:
+        repoUrl:
+          title: Repository
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+            allowedOwners:
+              - brunosantosnet
   steps:
-    - id: verificarNomeBucket
-      name: Verificar Disponibilidade do Nome do Bucket
-      action: http:get
+    - id: fetch-base
+      name: Aplicando template (Lambda)
+      action: fetch:template
       input:
-        url: 'https://s3.amazonaws.com/${{ parameters.bucketName }}'
-        errorOnNon2xxResponse: false
-        options:
-          timeout: 20
-
-    - id: criarBucketS3
-      name: Criar Bucket S3
-      action: aws:s3:createBucket
+        targetPath: aws-lambda/${{ parameters.name }}/
+        url: ./templates/lambda
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          memory: ${{ parameters.memory }}
+          timeout: ${{ parameters.timeout }}
+          vpc: ${{ parameters.vpc }}
+    - id: publish_lambda
+      name: Criando PR para Lambda
+      action: publish:github:pull-request
       input:
-        bucketName: '{{ parameters.bucketName }}'
-        region: '{{ parameters.bucketRegion }}'
+        allowedHosts: ['github.com']
+        repoUrl: ${{ parameters.repoUrl }}
+        sourcePath: aws-lambda/
+        targetPath: ./
+        description: Codigo da lambda ${{ parameters.name }}.
+        title: "feat: ${{ parameters.name }}"
+        branchName: "feat-${{ parameters.name }}"
 
   output:
     links:
-      - title: Acesso ao Bucket
-        url: 'https://s3.console.aws.amazon.com/s3/buckets/{{ parameters.bucketName }}'
+      - title: Repositório Lambda
+        url: ${{steps.publish_lambda.output.remoteUrl}}
+        text: "PR da Lambda"
