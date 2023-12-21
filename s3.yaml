@@ -1,18 +1,49 @@
 apiVersion: backstage.io/v1alpha1
-kind: Component
+kind: Template
 metadata:
-  name: nome-do-servico-exemplo
-  description: Descrição do serviço exemplo.
+  name: exemplo-template-servico
+  title: Template de Serviço Exemplo
+  description: Um template para criar um novo serviço.
   tags:
-    - java
-    - backend
+    - exemplo
+    - serviço
 spec:
-  type: service
-  lifecycle: production
   owner: equipe-responsavel
+  type: service
 
-links:
-  - url: https://github.com/sua-organizacao/repositorio-servico
-    title: Código Fonte
-  - url: https://sua-organizacao.servico-exemplo/docs
-    title: Documentação
+  parameters:
+    - title: Informações do Serviço
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Nome do Serviço
+          type: string
+          description: O nome do serviço a ser criado.
+        owner:
+          title: Proprietário do Serviço
+          type: string
+          description: O nome da equipe responsável pelo serviço.
+
+  steps:
+    - id: esqueleto
+      name: Gerar Esqueleto do Serviço
+      action: fetch:cookiecutter
+      input:
+        url: https://github.com/sua-organizacao/cookiecutter-exemplo.git
+        values:
+          name: '{{ parameters.name }}'
+          owner: '{{ parameters.owner }}'
+
+    - id: registro
+      name: Registrar no Catalogo
+      action: catalog:register
+      input:
+        repoContentsUrl: '{{ steps.esqueleto.output.repoContentsUrl }}'
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    links:
+      - url: '{{ steps.registro.output.entityUrl }}'
+        title: Ver Serviço no Backstage
