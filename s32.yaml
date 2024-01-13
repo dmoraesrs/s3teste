@@ -2,8 +2,8 @@ apiVersion: scaffolder.backstage.io/v1beta3
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-template
 kind: Template
 metadata:
-  name: example-nodejs-template2
-  title: Example Node.js Template 2
+  name: S3
+  title: S3
   description: An example template for the scaffolder that creates a simple Node.js service
 spec:
   owner: user:guest
@@ -34,6 +34,7 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
+              - dev.azure.com
 
   # These steps are executed in the scaffolder backend, using data that we gathered
   # via the parameters above.
@@ -43,7 +44,15 @@ spec:
       name: Fetch Base
       action: fetch:template
       input:
-        url: ./content
+        url: https://github.com/dmoraesrs/iac-terraform
+        values:
+          name: ${{ parameters.name }}
+
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: https://github.com/dmoraesrs/gcp-pileline
         values:
           name: ${{ parameters.name }}
 
