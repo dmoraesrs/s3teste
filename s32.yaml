@@ -52,7 +52,7 @@ spec:
       name: Fetch Base
       action: fetch:template
       input:
-        url: https://github.com/dmoraesrs/gcp-pileline
+        url: https://github.com/dmoraesrs/pipeline-tf
         values:
           name: ${{ parameters.name }}
 
