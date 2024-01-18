@@ -6,7 +6,7 @@ metadata:
   title: S3
   annotations:
     github.com/project-slug: 'backstage/backstage'
-  description: An example template for the scaffolder that creates a simple Node.js service
+  description: An example template for S3 Bucket
 spec:
   owner: user:guest
   type: service
